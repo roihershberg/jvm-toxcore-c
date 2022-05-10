@@ -32,6 +32,7 @@ tasks {
         to("$depsGitDir/libvpx")
         branch("v1.11.0")
         depth(1)
+        withPatch("$rootDir/patches/libvpx.patch")
     }
 
     register("fetchGitDeps") {

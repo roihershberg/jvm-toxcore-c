@@ -1,0 +1,49 @@
+From a320ec5c113b715f0518e72ba3acc6adac6ecc4d Mon Sep 17 00:00:00 2001
+From: Roee Hershberg <roihershberg@protonmail.com>
+Date: Tue, 10 May 2022 18:23:13 +0300
+Subject: [PATCH] Fix Android build
+
+---
+ build/make/configure.sh | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/build/make/configure.sh b/build/make/configure.sh
+index 81d30a1..f3c8d51 100644
+--- a/build/make/configure.sh
++++ b/build/make/configure.sh
+@@ -1089,9 +1089,6 @@ EOF
+           ;;
+ 
+         android*)
+-          echo "Assuming standalone build with NDK toolchain."
+-          echo "See build/make/Android.mk for details."
+-          check_add_ldflags -static
+           soft_enable unit_tests
+           ;;
+ 
+@@ -1249,6 +1246,7 @@ EOF
+       case  ${tgt_os} in
+         android)
+           soft_enable realtime_only
++          add_asflags -D__ANDROID__
+           ;;
+         win*)
+           enabled gcc && add_cflags -fno-common
+@@ -1419,6 +1417,14 @@ EOF
+           ;;
+       esac
+       ;;
++    x86_64*)
++      case  ${tgt_os} in
++        android)
++          soft_enable realtime_only
++          add_asflags -D__ANDROID__
++          ;;
++      esac
++      ;;
+     *-gcc|generic-gnu)
+       link_with_cc=gcc
+       enable_feature gcc
+-- 
+2.25.1
+
