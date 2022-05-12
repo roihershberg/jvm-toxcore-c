@@ -4,6 +4,8 @@ plugins {
 
 tasks {
     val depsGitDir = "$rootDir/_git"
+    val depsBuildDir = "$rootDir/_build"
+    val depsInstallDir = "$rootDir/_install"
 
     register<GitFetcher>("fetchGitToxcore") {
         from("https://github.com/TokTok/c-toxcore")
@@ -38,5 +40,41 @@ tasks {
     register("fetchGitDeps") {
         description = "Fetches the git repository of all the dependencies."
         dependsOn("fetchGitToxcore", "fetchGitLibsodium", "fetchGitOpus", "fetchGitLibvpx")
+    }
+
+    register<LibsodiumBuilder>("buildLibsodium") {
+        dependsOn("fetchGitLibsodium")
+        build("libsodium")
+        from(depsGitDir)
+        to(depsBuildDir)
+        installTo(depsInstallDir)
+        withConfiguration(LinuxHostConfiguration())
+    }
+
+    register<OpusBuilder>("buildOpus") {
+        dependsOn("fetchGitOpus")
+        build("opus")
+        from(depsGitDir)
+        to(depsBuildDir)
+        installTo(depsInstallDir)
+        withConfiguration(LinuxHostConfiguration())
+    }
+
+    register<LibvpxBuilder>("buildLibvpx") {
+        dependsOn("fetchGitLibvpx")
+        build("libvpx")
+        from(depsGitDir)
+        to(depsBuildDir)
+        installTo(depsInstallDir)
+        withConfiguration(LinuxHostConfiguration())
+    }
+
+    register<ToxcoreBuilder>("buildToxcore") {
+        dependsOn("fetchGitToxcore", "buildLibsodium", "buildOpus", "buildLibvpx")
+        build("toxcore")
+        from(depsGitDir)
+        to(depsBuildDir)
+        installTo(depsInstallDir)
+        withConfiguration(LinuxHostConfiguration())
     }
 }

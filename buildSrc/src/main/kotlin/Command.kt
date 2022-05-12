@@ -13,6 +13,7 @@ class Command(val project: Project, val command: List<String>) {
 
     fun run(
         currentWorkingDir: File = project.file("./"),
+        env: Map<String, String>? = null,
         outputMode: OutputMode = OutputMode.PRINT,
         crashOnError: Boolean = true
     ): CommandResult {
@@ -21,6 +22,9 @@ class Command(val project: Project, val command: List<String>) {
             workingDir(currentWorkingDir)
             commandLine(command)
             isIgnoreExitValue = !crashOnError
+            env?.let {
+                environment = it
+            }
             if (outputMode != OutputMode.PRINT) {
                 standardOutput = stdout
             }
