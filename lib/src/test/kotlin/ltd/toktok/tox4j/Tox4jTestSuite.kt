@@ -1,11 +1,15 @@
 package ltd.toktok.tox4j
 
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class Tox4jTestSuite {
+
+    init {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG")
+    }
+
     @Test fun someLibraryMethodReturnsTrue() {
-        val classUnderTest = Library()
-        assertTrue(classUnderTest.someLibraryMethod(), "someLibraryMethod should return 'true'")
+        println("${Tox.versionMajor}.${Tox.versionMinor}.${Tox.versionPatch}")
+        println("${Tox.maxHostnameLength}")
     }
 }

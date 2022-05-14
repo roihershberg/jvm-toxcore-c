@@ -2,10 +2,34 @@ plugins {
     `cpp-library`
 }
 
+library {
+    baseName.set("tox4j-jni")
+}
+
 tasks {
     val depsGitDir = "$rootDir/_git"
     val depsBuildDir = "$rootDir/_build"
     val depsInstallDir = "$rootDir/_install"
+    val prefix = "$depsInstallDir/${OSChecker.platform}"
+
+    withType<CppCompile>().configureEach {
+        includes("$prefix/include")
+        if (OSChecker.os == OS.`Mac OS X`) {
+            includes("${org.gradle.internal.jvm.Jvm.current().javaHome}/include")
+            includes("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/darwin")
+        } else if (OSChecker.os == OS.Linux) {
+            includes("${org.gradle.internal.jvm.Jvm.current().javaHome}/include")
+            includes("${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux")
+        }
+    }
+
+    withType<LinkSharedLibrary>().configureEach {
+        val libtoxcore = project.file("$prefix/lib")
+            .listFiles { file: File -> file.name.contains("toxcore") }
+            ?.firstOrNull() ?: throw RuntimeException("Can't find compiled toxcore library")
+
+        lib(libtoxcore)
+    }
 
     register<GitFetcher>("fetchGitToxcore") {
         from("https://github.com/TokTok/c-toxcore")
