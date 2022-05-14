@@ -1,2 +1,2 @@
 rootProject.name = "Tox4j"
-include("lib")
+include("lib", "jni")
